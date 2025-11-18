@@ -1,55 +1,22 @@
-import random
-from typing import Literal
-
-from langchain_core.messages import AIMessage
+from langchain.chat_models import init_chat_model
 from langgraph.graph import START, MessagesState, StateGraph
-from langgraph.types import Command
-
-
-class AgentState(MessagesState, total=False):
-    """`total=False` is PEP589 specs.
-
-    documentation: https://typing.readthedocs.io/en/latest/spec/typeddict.html#totality
-    """
-
 
 # Define the nodes
+model = init_chat_model(
+    "qwen3-max",
+    model_provider="openai",
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    api_key="sk-72fb5cc108ef4c52b08c549d25963bff"
+)
+
+# Define the chat node
+def call_model(state: MessagesState):
+    response = model.invoke(state["messages"])
+    return {"messages": [response]}
 
 
-def node_a(state: AgentState) -> Command[Literal["node_b", "node_c"]]:
-    print("Called A")
-    value = random.choice(["a", "b"])
-    goto: Literal["node_b", "node_c"]
-    # this is a replacement for a conditional edge function
-    if value == "a":
-        goto = "node_b"
-    else:
-        goto = "node_c"
-
-    # note how Command allows you to BOTH update the graph state AND route to the next node
-    return Command(
-        # this is the state update
-        update={"messages": [AIMessage(content=f"Hello {value}")]},
-        # this is a replacement for an edge
-        goto=goto,
-    )
-
-
-def node_b(state: AgentState):
-    print("Called B")
-    return {"messages": [AIMessage(content="Hello B")]}
-
-
-def node_c(state: AgentState):
-    print("Called C")
-    return {"messages": [AIMessage(content="Hello C")]}
-
-
-builder = StateGraph(AgentState)
-builder.add_edge(START, "node_a")
-builder.add_node(node_a)
-builder.add_node(node_b)
-builder.add_node(node_c)
-# NOTE: there are no edges between nodes A, B and C!
-
-command_agent = builder.compile()
+# Build and compile graph
+builder = StateGraph(MessagesState)
+builder.add_node("chat", call_model)
+builder.add_edge(START, "chat")
+graph = builder.compile()

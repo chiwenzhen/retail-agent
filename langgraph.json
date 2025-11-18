@@ -2,7 +2,7 @@
     "python_version": "3.12",
     "dependencies": ["./src"],
     "graphs": {
-        "research_assistant": "./src/agents/research_assistant.py:research_assistant"
+        "rec_agent": "./src/agents/rec_agent.py:graph"
     },
     "env": "./.env"
 }

@@ -3,6 +3,7 @@ from langchain.chat_models import init_chat_model
 from langgraph.graph import START, END, MessagesState, StateGraph
 from typing import TypedDict, Literal
 from langgraph.types import interrupt, Command, RetryPolicy
+from langchain.messages import AIMessage
 logger = logging.getLogger(__name__)
 
 # Define the nodes
@@ -53,13 +54,11 @@ def classify_intent(state: RetailAgentState) -> Command[Literal["qa", "rec"]]:
     user_intent = llm.invoke(classify_intent_prompt).content
     logger.info(f"user_intent= {user_intent}")
     if user_intent == "财富产品推荐":
-        goto = "rec"
+        goto = "prod_rec"
     elif user_intent == "财富产品详情":
-        goto = "qa"
-    elif user_intent == "财富产品查询":
-        goto = "qa"
+        goto = "prod_tail"
     elif user_intent == "财富产品对比":
-        goto = "qa"
+        goto = "prod_diff"
     elif user_intent == "其他":
         goto = "qa"
     else:
@@ -77,17 +76,31 @@ def qa(state: RetailAgentState):
     return {"messages": [response]}
 
 # Define the chat node
-def rec(state: RetailAgentState):
-    print(f"running rec")
-    response = "产品列表\n1.product1\n2.product2\n3.product3"
-    return {"rec_list": response, "messages": [ChatMessage(role="custom", content=response)]}
+def prod_rec(state: RetailAgentState):
+    print(f"running prod_rec")
+    rec_list = "产品推荐列表\n1.product1\n2.product2\n3.product3"
+    return {"rec_list": rec_list, "messages": [AIMessage(content=rec_list)]}
+
+def prod_detail(state: RetailAgentState):
+    print(f"running prod_detail")
+    rec_list = "产品详情:xxxxx"
+    return {"rec_list": rec_list, "messages": [AIMessage(content=rec_list)]}
+
+def prod_diff(state: RetailAgentState):
+    print(f"running prod_diff")
+    rec_list = "产品对比:产品A: bla bla bla, 产品B: bla bla bla"
+    return {"rec_list": rec_list, "messages": [AIMessage(content=rec_list)]}
 
 # Build and compile graph
 builder = StateGraph(RetailAgentState)
 builder.add_node("classify_intent", classify_intent)
 builder.add_node("qa", qa)
-builder.add_node("rec", rec)
+builder.add_node("prod_rec", prod_rec)
+builder.add_node("prod_detail", prod_detail)
+builder.add_node("prod_diff", prod_diff)
 builder.add_edge(START, "classify_intent")
-builder.add_edge("rec", END)
+builder.add_edge("prod_rec", END)
+builder.add_edge("prod_detail", END)
+builder.add_edge("prod_diff", END)
 builder.add_edge("qa", END)
 retail_agent = builder.compile()

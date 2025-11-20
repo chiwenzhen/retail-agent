@@ -2,7 +2,7 @@ import asyncio
 
 from client import AgentClient
 from core import settings
-from schema import ChatMessage, HumanMessage
+from schema import ChatMessage
 
 
 # async def amain() -> None:
@@ -35,11 +35,13 @@ def main() -> None:
     # print(client.info)
 
     print("Chat example:")
-    response = client.invoke("中国第一个皇帝是谁?", thread_id='user-123')
+    # response = client.invoke("中国第一个皇帝是谁?", thread_id='user-123')
+    # response.pretty_print()
+    # response = client.invoke("他的父亲是谁?", thread_id='user-123')
+    # response.pretty_print()
+    response = client.invoke("请给我推荐一些存款产品", thread_id='user-123')
     response.pretty_print()
-    response = client.invoke("他的父亲是谁?", thread_id='user-123')
-    response.pretty_print()
-    response = client.invoke("请给我推荐理财产品?", thread_id='user-123')
+    response = client.invoke("请给我推荐一些存款产品", thread_id='user-123')
     response.pretty_print()
 
     # print("\nStream example:")

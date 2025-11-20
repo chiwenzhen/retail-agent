@@ -33,9 +33,6 @@ class RetailAgentState(MessagesState):
     # 推荐产品
     rec_list: str
 
-    # 对话消息
-    messages: list[str] | None
-
 def classify_intent(state: RetailAgentState):
     logger.info(f"running classify_intent")
 

@@ -1,7 +1,9 @@
+import logging
 from langchain.chat_models import init_chat_model
 from langgraph.graph import START, END, MessagesState, StateGraph
 from typing import TypedDict, Literal
 from langgraph.types import interrupt, Command, RetryPolicy
+logger = logging.getLogger(__name__)
 
 # Define the nodes
 llm = init_chat_model(
@@ -38,7 +40,7 @@ class RetailAgentState(MessagesState):
     messages: list[str] | None
 
 def classify_intent(state: RetailAgentState):
-    """使用LLM识别用户意图，并路由到不同下游节点"""
+    logger.info(f"running classify_intent")
 
     # 创建带结构化输出的LLM
     structured_llm = llm.with_structured_output(UserIntent)
@@ -49,22 +51,27 @@ def classify_intent(state: RetailAgentState):
     Query: {state["messages"][-1].content}
     请提供用户的意图分类.
     """
+    logger.info(f"classify_intent_prompt= {classify_intent_prompt}")
     # Get structured response directly as dict
     user_intent = structured_llm.invoke(classify_intent_prompt)
+    logger.info(f"user_intent= {user_intent}")
 
     return {"user_intent": user_intent}
 
 # 根据意图路由
 def route_intent(state: RetailAgentState):
+    logger.info(f"running route_intent")
     return state["user_intent"].intent
 
 # Define the chat node
 def qa(state: RetailAgentState):
+    logger.info(f"running qa")
     response = llm.invoke(state["messages"])
     return {"messages": [response]}
 
 # Define the chat node
 def rec(state: RetailAgentState):
+    logger.info(f"running rec")
     return {"rec_list": "产品列表\n1.product1\n2.product2\n3.product3"}
 
 # Build and compile graph

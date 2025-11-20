@@ -81,15 +81,6 @@ builder.add_node("classify_intent", classify_intent)
 builder.add_node("qa", qa)
 builder.add_node("rec", rec)
 builder.add_edge(START, "classify_intent")
-builder.add_conditional_edges(
-    "classify_intent",
-    route_intent,
-    {  # Name returned by route_decision : Name of next node to visit
-        "产品推荐": "rec",
-        "产品问答": "qa",
-        "其他": "qa",
-    },
-)
 builder.add_edge("rec", END)
 builder.add_edge("qa", END)
 retail_agent = builder.compile()

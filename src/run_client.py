@@ -41,7 +41,9 @@ def main() -> None:
     # response.pretty_print()
     response = client.invoke("请给我推荐一些存款产品", thread_id='user-123')
     response.pretty_print()
-    response = client.invoke("请给我推荐一些存款产品", thread_id='user-123')
+    response = client.invoke("请帮我介绍易方达基金", thread_id='user-123')
+    response.pretty_print()
+    response = client.invoke("请对比一下浙富宝7天301号和长赢14D002号", thread_id='user-123')
     response.pretty_print()
 
     # print("\nStream example:")

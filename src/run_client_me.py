@@ -49,14 +49,14 @@ def main() -> None:
             message.pretty_print()
         else:
             print(f"ERROR: Unknown type - {type(message)}")
-    for message in client.stream("他的父亲是谁?", thread_id='user-123'):
-        if isinstance(message, str):
-            print(message, flush=True, end="")
-        elif isinstance(message, ChatMessage):
-            print("\n", flush=True)
-            message.pretty_print()
-        else:
-            print(f"ERROR: Unknown type - {type(message)}")
+    # for message in client.stream("他的父亲是谁?", thread_id='user-123'):
+    #     if isinstance(message, str):
+    #         print(message, flush=True, end="")
+    #     elif isinstance(message, ChatMessage):
+    #         print("\n", flush=True)
+    #         message.pretty_print()
+    #     else:
+    #         print(f"ERROR: Unknown type - {type(message)}")
 
 
 if __name__ == "__main__":

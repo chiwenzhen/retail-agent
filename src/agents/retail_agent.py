@@ -58,11 +58,6 @@ def classify_intent(state: RetailAgentState) -> Command[Literal["qa", "rec"]]:
         goto=goto
     )
 
-# 根据意图路由
-def route_intent(state: RetailAgentState):
-    print(f"running route_intent")
-    return state["user_intent"]
-
 # Define the chat node
 def qa(state: RetailAgentState):
     print(f"running qa")

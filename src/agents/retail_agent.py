@@ -33,8 +33,8 @@ class RetailAgentState(MessagesState):
     # 推荐产品
     rec_list: str
 
-def classify_intent(state: RetailAgentState):
-    logger.info(f"running classify_intent")
+def classify_intent(state: RetailAgentState) -> Command[Literal["search_documentation", "human_review", "draft_response", "bug_tracking"]]:
+    print(f"running classify_intent")
 
     # 意图识别prompt
     classify_intent_prompt = f"""
@@ -45,23 +45,33 @@ def classify_intent(state: RetailAgentState):
     # Get structured response directly as dict
     user_intent = llm.invoke(classify_intent_prompt)
     logger.info(f"user_intent= {user_intent}")
-
-    return {"user_intent": user_intent}
+    if user_intent == "产品推荐":
+        goto = "rec"
+    elif user_intent == "产品问答":
+        goto = "qa"
+    elif user_intent == "其他":
+        goto = "qa"
+    else:
+        goto = "qa"
+    return Command(
+        update={"user_intent": user_intent},
+        goto=goto
+    )
 
 # 根据意图路由
 def route_intent(state: RetailAgentState):
-    logger.info(f"running route_intent")
+    print(f"running route_intent")
     return state["user_intent"]
 
 # Define the chat node
 def qa(state: RetailAgentState):
-    logger.info(f"running qa")
+    print(f"running qa")
     response = llm.invoke(state["messages"])
     return {"messages": [response]}
 
 # Define the chat node
 def rec(state: RetailAgentState):
-    logger.info(f"running rec")
+    print(f"running rec")
     response = "产品列表\n1.product1\n2.product2\n3.product3"
     return {"rec_list": response, "messages": [response]}
 

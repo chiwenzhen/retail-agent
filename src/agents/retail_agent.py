@@ -37,6 +37,7 @@ def classify_intent(state: RetailAgentState) -> Command[Literal["qa", "rec"]]:
     print(f"running classify_intent")
 
     # 意图识别prompt
+    last_question = state["messages"][-1].content
     classify_intent_prompt = f"""
     请分析用户输入的Query，将其意图分类到这三类：
     1.财富产品推荐：当用户让你推荐财富产品时，包括储蓄存款、理财、基金、资管、保险、贵金属、柜台债、国债等等
@@ -45,7 +46,7 @@ def classify_intent(state: RetailAgentState) -> Command[Literal["qa", "rec"]]:
     4.财富产品对比：当用户让你对比两款具体的财富产品差异时，包括储蓄存款、理财、基金、资管、保险、贵金属、柜台债、国债等等
     5.其他：其他问题时触发
     要求：只能输出[财富产品推荐, 财富产品详情, 财富产品查询, 财富产品对比, 其他]之中的一个，不得输出其他内容。
-    Query: {state["messages"][-1].content}
+    Query: {last_question}
     """
     logger.info(f"classify_intent_prompt= {classify_intent_prompt}")
     # Get structured response directly as dict
@@ -63,7 +64,7 @@ def classify_intent(state: RetailAgentState) -> Command[Literal["qa", "rec"]]:
         goto = "qa"
     else:
         goto = "qa"
-    print(f'user_intent={user_intent}')
+    print(f'last_question={last_question}\nuser_intent={user_intent}')
     return Command(
         update={"user_intent": user_intent},
         goto=goto

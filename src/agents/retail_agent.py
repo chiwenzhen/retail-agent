@@ -55,7 +55,7 @@ def classify_intent(state: RetailAgentState) -> Command[Literal["qa", "prod_rec"
     if user_intent == "财富产品推荐":
         goto = "prod_rec"
     elif user_intent == "财富产品详情":
-        goto = "prod_tail"
+        goto = "prod_detail"
     elif user_intent == "财富产品对比":
         goto = "prod_diff"
     elif user_intent == "其他":

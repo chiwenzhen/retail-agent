@@ -35,16 +35,20 @@ def main() -> None:
     # print(client.info)
 
     print("Chat example:")
-    # response = client.invoke("中国第一个皇帝是谁?", thread_id='user-123')
-    # response.pretty_print()
-    # response = client.invoke("他的父亲是谁?", thread_id='user-123')
-    # response.pretty_print()
-    response = client.invoke("请给我推荐一些存款产品", thread_id='user-123')
-    response.pretty_print()
-    response = client.invoke("请帮我介绍易方达基金", thread_id='user-123')
-    response.pretty_print()
-    response = client.invoke("请对比一下浙富宝7天301号和长赢14D002号", thread_id='user-123')
-    response.pretty_print()
+    questions = [
+        "中国第一个皇帝是谁",
+        "他的父亲是谁",
+        "请给我推荐一些存款产品",
+        "请帮我介绍易方达基金",
+        "请对比一下浙富宝7天301号和长赢14D002号"
+    ]
+    for question in questions:
+        print("Human:", end="")
+        print(question)
+        response = client.invoke(question, thread_id='user-123')
+        print("AI:", end="")
+        print(response.content)
+
 
     # print("\nStream example:")
     # for message in client.stream("中国第一个皇帝是谁?", thread_id='user-123'):

@@ -50,7 +50,7 @@ def classify_intent(state: RetailAgentState) -> Command[Literal["qa", "rec"]]:
     """
     logger.info(f"classify_intent_prompt= {classify_intent_prompt}")
     # Get structured response directly as dict
-    user_intent = llm.invoke(classify_intent_prompt)
+    user_intent = llm.invoke(classify_intent_prompt).content
     logger.info(f"user_intent= {user_intent}")
     if user_intent == "财富产品推荐":
         goto = "rec"

@@ -80,7 +80,7 @@ def qa(state: RetailAgentState):
 def rec(state: RetailAgentState):
     print(f"running rec")
     response = "产品列表\n1.product1\n2.product2\n3.product3"
-    return {"rec_list": response, "messages": [response]}
+    return {"rec_list": response, "messages": [ChatMessage(role="custom", content=response)]}
 
 # Build and compile graph
 builder = StateGraph(RetailAgentState)

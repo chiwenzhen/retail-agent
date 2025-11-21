@@ -7,6 +7,14 @@ from langchain.messages import AIMessage
 logger = logging.getLogger(__name__)
 
 # Define the nodes
+intent_llm = init_chat_model(
+    "qwen3-max",
+    model_provider="openai",
+    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    api_key="sk-72fb5cc108ef4c52b08c549d25963bff",
+    disable_streaming=True
+)
+
 llm = init_chat_model(
     "qwen3-max",
     model_provider="openai",
@@ -50,7 +58,7 @@ def classify_intent(state: RetailAgentState) -> Command[Literal["qa", "prod_rec"
     """
     logger.info(f"classify_intent_prompt= {classify_intent_prompt}")
     # Get structured response directly as dict
-    user_intent = llm.invoke(classify_intent_prompt).content
+    user_intent = intent_llm.invoke(classify_intent_prompt).content
     logger.info(f"user_intent= {user_intent}")
     if user_intent == "财富产品推荐":
         goto = "prod_rec"
